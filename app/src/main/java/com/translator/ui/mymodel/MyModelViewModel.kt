@@ -15,6 +15,7 @@ import com.translator.ui.mymodel.MyModelUiState.Error
 import com.translator.ui.mymodel.MyModelUiState.Loading
 import com.translator.ui.mymodel.MyModelUiState.Success
 import android.util.Log
+import com.translator.data.model.TranslateRequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,6 +39,14 @@ class MyModelViewModel @Inject constructor(
         viewModelScope.launch {
             myModelRepository.add(name)
         }
+    }
+
+    suspend fun translate(text: String): String {
+         return translatorApi.translate(TranslateRequestBody(
+            q = text,
+            source = "en",
+            target = "ru"
+        )).translatedText
     }
 }
 
