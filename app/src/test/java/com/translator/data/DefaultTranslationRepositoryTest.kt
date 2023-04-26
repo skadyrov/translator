@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.translator.ui.mymodel
-
+package com.translator.data
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -24,36 +23,35 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import com.translator.data.MyModelRepository
+import com.translator.data.local.database.MyModel
+import com.translator.data.local.database.MyModelDao
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * Unit tests for [DefaultTranslationRepository].
  */
 @OptIn(ExperimentalCoroutinesApi::class) // TODO: Remove when stable
-class MainViewModelTest {
-    @Test
-    fun uiState_initiallyLoading() = runTest {
-        val viewModel = MainViewModel(FakeMyModelRepository())
-        assertEquals(viewModel.uiState.first(), MyModelUiState.Loading)
-    }
+class DefaultTranslationRepositoryTest {
 
     @Test
-    fun uiState_onItemSaved_isDisplayed() = runTest {
-        val viewModel = MainViewModel(FakeMyModelRepository())
-        assertEquals(viewModel.uiState.first(), MyModelUiState.Loading)
+    fun myModels_newItemSaved_itemIsReturned() = runTest {
+        val repository = DefaultTranslationRepository(FakeMyModelDao())
+
+        repository.add("Repository")
+
+        assertEquals(repository.myModels.first().size, 1)
     }
+
 }
 
-private class FakeMyModelRepository : MyModelRepository {
+private class FakeMyModelDao : MyModelDao {
 
-    private val data = mutableListOf<String>()
+    private val data = mutableListOf<MyModel>()
 
-    override val myModels: Flow<List<String>>
-        get() = flow { emit(data.toList()) }
+    override fun getMyModels(): Flow<List<MyModel>> = flow {
+        emit(data)
+    }
 
-    override suspend fun add(name: String) {
-        data.add(0, name)
+    override suspend fun insertMyModel(item: MyModel) {
+        data.add(0, item)
     }
 }

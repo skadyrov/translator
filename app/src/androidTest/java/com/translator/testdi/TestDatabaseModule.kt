@@ -20,9 +20,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import com.translator.data.MyModelRepository
+import com.translator.data.TranslationRepository
 import com.translator.data.di.DataModule
-import com.translator.data.di.FakeMyModelRepository
+import com.translator.data.di.FakeTranslationRepository
 
 @Module
 @TestInstallIn(
@@ -33,6 +33,6 @@ interface FakeDataModule {
 
     @Binds
     abstract fun bindRepository(
-        fakeRepository: FakeMyModelRepository
-    ): MyModelRepository
+        fakeRepository: FakeTranslationRepository
+    ): TranslationRepository
 }

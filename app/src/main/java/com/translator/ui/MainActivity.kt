@@ -11,7 +11,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.translator.R
-import com.translator.ui.mymodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -25,8 +24,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        viewModel.addMyModel("hi")
 
         val buttonTranslate = findViewById<Button>(R.id.btn_translate)
         val etTextToTranslate = findViewById<EditText>(R.id.et_text_to_translate)

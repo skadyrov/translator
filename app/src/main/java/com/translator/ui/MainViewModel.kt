@@ -1,34 +1,20 @@
-package com.translator.ui.mymodel
+package com.translator.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.translator.data.MyModelRepository
+import com.translator.data.TranslationRepository
 import com.translator.data.model.Language
 import com.translator.data.model.TranslateRequestBody
-import com.translator.data.remote.TranslatorApi
-import com.translator.ui.mymodel.MyModelUiState.Error
-import com.translator.ui.mymodel.MyModelUiState.Loading
-import com.translator.ui.mymodel.MyModelUiState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val myModelRepository: MyModelRepository,
-    private val translatorApi: TranslatorApi
+    private val translationRepository: TranslationRepository,
 ) : ViewModel() {
-
-    val uiState: StateFlow<MyModelUiState> = myModelRepository
-        .myModels.map<List<String>, MyModelUiState>(::Success)
-        .catch { emit(Error(it)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
 
     private var languagesMapByName: Map<String, Language> = emptyMap()
     private var languagesMapByCode: Map<String, Language> = emptyMap()
@@ -44,7 +30,7 @@ class MainViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val languages = translatorApi.getLanguages()
+            val languages = translationRepository.getLanguages()
             languagesMapByName = languages.associateBy {
                 it.name
             }
@@ -54,12 +40,6 @@ class MainViewModel @Inject constructor(
             val languagesToDisplay = languages.map { it.name }
             _fromLanguages.emit(languagesToDisplay)
             _toLanguages.emit(languagesToDisplay)
-        }
-    }
-
-    fun addMyModel(name: String) {
-        viewModelScope.launch {
-            myModelRepository.add(name)
         }
     }
 
@@ -79,16 +59,10 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun translate(text: String): String {
-         return translatorApi.translate(TranslateRequestBody(
+         return translationRepository.translate(TranslateRequestBody(
             q = text,
             source = source,
             target = target
         )).translatedText
     }
-}
-
-sealed interface MyModelUiState {
-    object Loading : MyModelUiState
-    data class Error(val throwable: Throwable) : MyModelUiState
-    data class Success(val data: List<String>) : MyModelUiState
 }
