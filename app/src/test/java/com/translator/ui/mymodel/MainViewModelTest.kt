@@ -32,16 +32,16 @@ import com.translator.data.MyModelRepository
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @OptIn(ExperimentalCoroutinesApi::class) // TODO: Remove when stable
-class MyModelViewModelTest {
+class MainViewModelTest {
     @Test
     fun uiState_initiallyLoading() = runTest {
-        val viewModel = MyModelViewModel(FakeMyModelRepository())
+        val viewModel = MainViewModel(FakeMyModelRepository())
         assertEquals(viewModel.uiState.first(), MyModelUiState.Loading)
     }
 
     @Test
     fun uiState_onItemSaved_isDisplayed() = runTest {
-        val viewModel = MyModelViewModel(FakeMyModelRepository())
+        val viewModel = MainViewModel(FakeMyModelRepository())
         assertEquals(viewModel.uiState.first(), MyModelUiState.Loading)
     }
 }

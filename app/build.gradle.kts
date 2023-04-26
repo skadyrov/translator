@@ -66,6 +66,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
